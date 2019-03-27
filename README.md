@@ -9,5 +9,5 @@ Hay dos posibilidades:
       Maven Build --> Boton derecho new configuration
         Base directory --> ruta donde esta el proyecto
         Goal --> clean install
-        Opcional: Marcar offline, para no conectarse al repositorio remoto de maven y utilice el repositorio local directamente
+        Opcional: Si teneis en repositorio maven local la dependencias, necesarias, marcar offline, para no conectarse al repositorio remoto de maven y utilice el repositorio local directamente
 2. Desde linea de comandos median mvn clean install
