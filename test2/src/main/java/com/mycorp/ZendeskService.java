@@ -122,14 +122,12 @@ public class ZendeskService {
                 clientName.append(idCliente);
                 datosServicio.append("Datos recuperados del servicio de tarjeta:").append(ESCAPED_LINE_SEPARATOR).append(mapper.writeValueAsString(idCliente));
                 
-            }catch(Exception e)
-            {
+            }catch(Exception e){
                 LOG.error("Error al obtener los datos de la tarjeta", e);
             }
         }
         else if(StringUtils.isNotBlank(usuarioAlta.getNumPoliza())){
-            try
-            {
+            try{
             	String numPoliza = usuarioAlta.getNumPoliza();
             	String numDocAcreditativo = usuarioAlta.getNumDocAcreditativo();    
                 DetallePoliza detallePolizaResponse = recuperarPolizaCliente(numPoliza, numDocAcreditativo);
@@ -142,18 +140,15 @@ public class ZendeskService {
 
                 idCliente = detallePolizaResponse.getTomador().getIdentificador();
                 datosServicio.append("Datos recuperados del servicio de tarjeta:").append(ESCAPED_LINE_SEPARATOR).append(mapper.writeValueAsString(detallePolizaResponse));
-            }catch(Exception e)
-            {
+            }catch(Exception e){
                 LOG.error("Error al obtener los datos de la poliza", e);
             }
         }
 
-        try
-        {
+        try{
         	datosBravo = getDatosBravo(idCliente);
             
-        }catch(Exception e)
-        {
+        }catch(Exception e){
             LOG.error("Error al obtener los datos en BRAVO del cliente", e);
         }
 
@@ -169,18 +164,7 @@ public class ZendeskService {
         }catch(Exception e){
             LOG.error("Error al crear ticket ZENDESK", e);
             // Send email
-
-            CorreoElectronico correo = new CorreoElectronico( Long.parseLong(ZENDESK_ERROR_MAIL_FUNCIONALIDAD), "es" )
-                    .addParam(datosUsuario.toString().replaceAll(ESCAPE_ER+ESCAPED_LINE_SEPARATOR, HTML_BR))
-                    .addParam(datosBravo.toString().replaceAll(ESCAPE_ER+ESCAPED_LINE_SEPARATOR, HTML_BR));
-            correo.setEmailA( ZENDESK_ERROR_DESTINATARIO );
-            try
-            {
-                emailService.enviar( correo );
-            }catch(Exception ex){
-                LOG.error("Error al enviar mail", ex);
-            }
-
+            sendMail(datosUsuario.toString(), datosBravo.toString());
         }
 
         datosUsuario.append(datosBravo);
@@ -294,6 +278,24 @@ public class ZendeskService {
 
 		return datosBravo;
     	
+    }
+    
+    /**
+     * MÃ©todo para enviar mail
+     *
+     * @param datosusuario, datosbravo
+     */
+    private void sendMail(String datosUsuario, String datosBravo) {
+    	CorreoElectronico correo = new CorreoElectronico( Long.parseLong(ZENDESK_ERROR_MAIL_FUNCIONALIDAD), "es" )
+    			.addParam(datosUsuario.toString().replaceAll(ESCAPE_ER+ESCAPED_LINE_SEPARATOR, HTML_BR))
+                .addParam(datosBravo.toString().replaceAll(ESCAPE_ER+ESCAPED_LINE_SEPARATOR, HTML_BR));
+        correo.setEmailA( ZENDESK_ERROR_DESTINATARIO );
+        try
+        {
+            emailService.enviar( correo );
+        }catch(Exception ex){
+            LOG.error("Error al enviar mail", ex);
+        }
     }
     
     
