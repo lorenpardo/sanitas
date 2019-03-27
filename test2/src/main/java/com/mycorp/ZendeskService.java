@@ -27,6 +27,7 @@ import com.mycorp.support.Ticket;
 import com.mycorp.support.ValueCode;
 
 import portalclientesweb.ejb.interfaces.PortalClientesWebEJBRemote;
+import util.datos.DetallePoliza;
 import util.datos.PolizaBasico;
 import util.datos.UsuarioAlta;
 
@@ -128,14 +129,9 @@ public class ZendeskService {
         else if(StringUtils.isNotBlank(usuarioAlta.getNumPoliza())){
             try
             {
-                Poliza poliza = new Poliza();
-                poliza.setNumPoliza(Integer.valueOf(usuarioAlta.getNumPoliza()));
-                poliza.setNumColectivo(Integer.valueOf(usuarioAlta.getNumDocAcreditativo()));
-                poliza.setCompania(1);
-
-                PolizaBasico polizaBasicoConsulta = new PolizaBasicoFromPolizaBuilder().withPoliza( poliza ).build();
-
-                final util.datos.DetallePoliza detallePolizaResponse = portalclientesWebEJBRemote.recuperarDatosPoliza(polizaBasicoConsulta);
+            	String numPoliza = usuarioAlta.getNumPoliza();
+            	String numDocAcreditativo = usuarioAlta.getNumDocAcreditativo();    
+                DetallePoliza detallePolizaResponse = recuperarPolizaCliente(numPoliza, numDocAcreditativo);
 
                 clientName.append(detallePolizaResponse.getTomador().getNombre()).
                             append(" ").
@@ -257,5 +253,29 @@ public class ZendeskService {
             idCliente = res.getBody();
         }
 		return idCliente;	
-    }   
+    } 
+    
+    /**
+     * MÃ©todo para obtener el idCliente por numero de tarjeta
+     *
+     * @param numero de Tarjeta
+     * @return idCliente
+     */
+    private DetallePoliza recuperarPolizaCliente(String numPoliza, String numDocAcreditativo){
+    	
+    	DetallePoliza detallePolizaResponse=null;
+    	
+    	Poliza poliza = new Poliza();
+        poliza.setNumPoliza(Integer.valueOf(numPoliza));
+        poliza.setNumColectivo(Integer.valueOf(numDocAcreditativo));
+        poliza.setCompania(1);
+
+        PolizaBasico polizaBasicoConsulta = new PolizaBasicoFromPolizaBuilder().withPoliza( poliza ).build();
+
+        detallePolizaResponse = portalclientesWebEJBRemote.recuperarDatosPoliza(polizaBasicoConsulta);
+    	
+		return detallePolizaResponse;	
+    } 
+    
+    
 }
