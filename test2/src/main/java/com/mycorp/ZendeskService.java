@@ -111,7 +111,7 @@ public class ZendeskService {
             			.append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
             try{        	
             	String numDocAcreditativo = usuarioAlta.getNumDocAcreditativo();    
-                DetallePoliza detallePolizaResponse = recuperarPolizaCliente(numPoliza, numDocAcreditativo);
+                DetallePoliza detallePolizaResponse = getDatosPolizaCliente(numPoliza, numDocAcreditativo);
 
                 clientName.append(detallePolizaResponse.getTomador().getNombre()).
                             append(" ").
@@ -211,7 +211,7 @@ public class ZendeskService {
      * @param numero poliza, numDocAcreditativo
      * @return detalle de la poliza
      */
-    private DetallePoliza recuperarPolizaCliente(String numPoliza, String numDocAcreditativo){
+    private DetallePoliza getDatosPolizaCliente(String numPoliza, String numDocAcreditativo){
     	
     	DetallePoliza detallePolizaResponse=null;
     	
