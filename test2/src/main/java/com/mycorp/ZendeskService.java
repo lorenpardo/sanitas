@@ -99,36 +99,17 @@ public class ZendeskService {
 
         StringBuilder clientName = new StringBuilder();
 
+        StringBuilder datosServicio = new StringBuilder();
 
         // AÃ±ade los datos del formulario
-        if(StringUtils.isNotBlank(usuarioAlta.getNumPoliza())){
-            datosUsuario.append("NÂº de poliza/colectivo: ").append(usuarioAlta.getNumPoliza()).append("/").append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
-        }else{
-            datosUsuario.append("NÂº tarjeta Sanitas o Identificador: ").append(usuarioAlta.getNumTarjeta()).append(ESCAPED_LINE_SEPARATOR);
-        }
-        datosUsuario.append("Tipo documento: ").append(usuarioAlta.getTipoDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("NÂº documento: ").append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("Email personal: ").append(usuarioAlta.getEmail()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("NÂº mÃ³vil: ").append(usuarioAlta.getNumeroTelefono()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("User Agent: ").append(userAgent).append(ESCAPED_LINE_SEPARATOR);
-
-        datosBravo.append(ESCAPED_LINE_SEPARATOR + "Datos recuperados de BRAVO:" + ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
-        StringBuilder datosServicio = new StringBuilder();
-        // Obtiene el idCliente de la tarjeta
         String numTarjeta = usuarioAlta.getNumTarjeta();
-        if(StringUtils.isNotBlank(numTarjeta)){
-        	try {
-            	idCliente=getIdClientePorNumTarjeta(numTarjeta);
-                clientName.append(idCliente);
-                datosServicio.append("Datos recuperados del servicio de tarjeta:").append(ESCAPED_LINE_SEPARATOR).append(mapper.writeValueAsString(idCliente));
-                
-            }catch(Exception e){
-                LOG.error("Error al obtener los datos de la tarjeta", e);
-            }
-        }
-        else if(StringUtils.isNotBlank(usuarioAlta.getNumPoliza())){
-            try{
-            	String numPoliza = usuarioAlta.getNumPoliza();
+        String numPoliza = usuarioAlta.getNumPoliza();
+        
+        // si el alta de ticket se va a dar por numero de poliza
+        if(StringUtils.isNotBlank(usuarioAlta.getNumPoliza())){
+            datosUsuario.append("NÂº de poliza/colectivo: ").append(usuarioAlta.getNumPoliza()).append("/")
+            			.append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
+            try{        	
             	String numDocAcreditativo = usuarioAlta.getNumDocAcreditativo();    
                 DetallePoliza detallePolizaResponse = recuperarPolizaCliente(numPoliza, numDocAcreditativo);
 
@@ -144,7 +125,27 @@ public class ZendeskService {
                 LOG.error("Error al obtener los datos de la poliza", e);
             }
         }
+        // en caso contrario se va a dar por numero de tarjeta
+        else{
+            datosUsuario.append("NÂº tarjeta Sanitas o Identificador: ").append(usuarioAlta.getNumTarjeta()).append(ESCAPED_LINE_SEPARATOR);
+            try {
+            	idCliente=getIdClientePorNumTarjeta(numTarjeta);
+                clientName.append(idCliente);
+                datosServicio.append("Datos recuperados del servicio de tarjeta:").append(ESCAPED_LINE_SEPARATOR).append(mapper.writeValueAsString(idCliente));
+                
+            }catch(Exception e){
+                LOG.error("Error al obtener los datos de la tarjeta", e);
+            }      
+        }
+        
+        datosUsuario.append("Tipo documento: ").append(usuarioAlta.getTipoDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("NÂº documento: ").append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("Email personal: ").append(usuarioAlta.getEmail()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("NÂº mÃ³vil: ").append(usuarioAlta.getNumeroTelefono()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("User Agent: ").append(userAgent).append(ESCAPED_LINE_SEPARATOR);
 
+        datosBravo.append(ESCAPED_LINE_SEPARATOR + "Datos recuperados de BRAVO:" + ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
+     
         try{
         	datosBravo = getDatosBravo(idCliente);
             
