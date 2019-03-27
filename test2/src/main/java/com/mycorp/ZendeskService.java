@@ -113,16 +113,13 @@ public class ZendeskService {
         datosBravo.append(ESCAPED_LINE_SEPARATOR + "Datos recuperados de BRAVO:" + ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
         StringBuilder datosServicio = new StringBuilder();
         // Obtiene el idCliente de la tarjeta
-        if(StringUtils.isNotBlank(usuarioAlta.getNumTarjeta())){
-            try{
-                String urlToRead = TARJETAS_GETDATOS + usuarioAlta.getNumTarjeta();
-                ResponseEntity<String> res = restTemplate.getForEntity( urlToRead, String.class);
-                if(res.getStatusCode() == HttpStatus.OK){
-                    String dusuario = res.getBody();
-                    clientName.append(dusuario);
-                    idCliente = dusuario;
-                    datosServicio.append("Datos recuperados del servicio de tarjeta:").append(ESCAPED_LINE_SEPARATOR).append(mapper.writeValueAsString(dusuario));
-                }
+        String numTarjeta = usuarioAlta.getNumTarjeta();
+        if(StringUtils.isNotBlank(numTarjeta)){
+        	try {
+            	idCliente=getIdClientePorNumTarjeta(numTarjeta);
+                clientName.append(idCliente);
+                datosServicio.append("Datos recuperados del servicio de tarjeta:").append(ESCAPED_LINE_SEPARATOR).append(mapper.writeValueAsString(idCliente));
+                
             }catch(Exception e)
             {
                 LOG.error("Error al obtener los datos de la tarjeta", e);
@@ -244,4 +241,21 @@ public class ZendeskService {
     {
         return resBravo.toString().replaceAll("[\\[\\]\\{\\}\\\"\\r]", "").replaceAll(ESCAPED_LINE_SEPARATOR, ESCAPE_ER + ESCAPED_LINE_SEPARATOR);
     }
+    
+    /**
+     * MÃ©todo para obtener el idCliente por numero de tarjeta
+     *
+     * @param numero de Tarjeta
+     * @return idCliente
+     */
+    private String getIdClientePorNumTarjeta(String numTarjeta){
+    	
+    	String idCliente=null;
+    	String urlToRead = TARJETAS_GETDATOS + numTarjeta;
+        ResponseEntity<String> res = restTemplate.getForEntity( urlToRead, String.class);
+        if(res.getStatusCode() == HttpStatus.OK){
+            idCliente = res.getBody();
+        }
+		return idCliente;	
+    }   
 }
