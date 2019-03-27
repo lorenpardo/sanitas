@@ -67,7 +67,6 @@ public class ZendeskService {
 
     private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-
     /** The portalclientes web ejb remote. */
     @Autowired
     // @Qualifier("portalclientesWebEJB")
@@ -100,8 +99,7 @@ public class ZendeskService {
         StringBuilder clientName = new StringBuilder();
 
         StringBuilder datosServicio = new StringBuilder();
-
-        
+    
         String numTarjeta = usuarioAlta.getNumTarjeta();
         String numPoliza = usuarioAlta.getNumPoliza();
         
@@ -159,8 +157,7 @@ public class ZendeskService {
             // Send email
             sendMail(datosUsuario.toString(), datosBravo.toString());
         }
-
-        
+       
         // AÃ±ade los datos del formulario
         datosUsuario.append("Tipo documento: ").append(usuarioAlta.getTipoDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
         datosUsuario.append("NÂº documento: ").append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
