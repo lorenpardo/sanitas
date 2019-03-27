@@ -143,8 +143,6 @@ public class ZendeskService {
         datosUsuario.append("Email personal: ").append(usuarioAlta.getEmail()).append(ESCAPED_LINE_SEPARATOR);
         datosUsuario.append("NÂº mÃ³vil: ").append(usuarioAlta.getNumeroTelefono()).append(ESCAPED_LINE_SEPARATOR);
         datosUsuario.append("User Agent: ").append(userAgent).append(ESCAPED_LINE_SEPARATOR);
-
-        datosBravo.append(ESCAPED_LINE_SEPARATOR + "Datos recuperados de BRAVO:" + ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
      
         try{
         	datosBravo = getDatosBravo(idCliente);
@@ -236,6 +234,8 @@ public class ZendeskService {
      */
     private StringBuilder getDatosBravo(String idCliente) {
     	StringBuilder datosBravo = new StringBuilder();
+    	
+    	datosBravo.append(ESCAPED_LINE_SEPARATOR + "Datos recuperados de BRAVO:" + ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
     	
     	// Obtenemos los datos del cliente
         DatosCliente cliente = restTemplate.getForObject("http://localhost:8080/test-endpoint", DatosCliente.class, idCliente);
