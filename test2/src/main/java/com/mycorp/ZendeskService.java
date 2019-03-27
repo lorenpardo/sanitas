@@ -256,10 +256,10 @@ public class ZendeskService {
     } 
     
     /**
-     * MÃ©todo para obtener el idCliente por numero de tarjeta
+     * MÃ©todo para obtener poliza de un cliente por numero de poliza y numero de documento acreditativo
      *
-     * @param numero de Tarjeta
-     * @return idCliente
+     * @param numero poliza, numDocAcreditativo
+     * @return detalle de la poliza
      */
     private DetallePoliza recuperarPolizaCliente(String numPoliza, String numDocAcreditativo){
     	
