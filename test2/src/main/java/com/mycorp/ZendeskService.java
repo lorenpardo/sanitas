@@ -101,7 +101,7 @@ public class ZendeskService {
 
         StringBuilder datosServicio = new StringBuilder();
 
-        // AÃ±ade los datos del formulario
+        
         String numTarjeta = usuarioAlta.getNumTarjeta();
         String numPoliza = usuarioAlta.getNumPoliza();
         
@@ -125,7 +125,7 @@ public class ZendeskService {
                 LOG.error("Error al obtener los datos de la poliza", e);
             }
         }
-        // en caso contrario se va a dar por numero de tarjeta
+        // en caso contrario, se va a dar por numero de tarjeta
         else{
             datosUsuario.append("NÂº tarjeta Sanitas o Identificador: ").append(usuarioAlta.getNumTarjeta()).append(ESCAPED_LINE_SEPARATOR);
             try {
@@ -137,13 +137,7 @@ public class ZendeskService {
                 LOG.error("Error al obtener los datos de la tarjeta", e);
             }      
         }
-        
-        datosUsuario.append("Tipo documento: ").append(usuarioAlta.getTipoDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("NÂº documento: ").append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("Email personal: ").append(usuarioAlta.getEmail()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("NÂº mÃ³vil: ").append(usuarioAlta.getNumeroTelefono()).append(ESCAPED_LINE_SEPARATOR);
-        datosUsuario.append("User Agent: ").append(userAgent).append(ESCAPED_LINE_SEPARATOR);
-     
+             
         try{
         	datosBravo = getDatosBravo(idCliente);
             
@@ -166,6 +160,14 @@ public class ZendeskService {
             sendMail(datosUsuario.toString(), datosBravo.toString());
         }
 
+        
+        // AÃ±ade los datos del formulario
+        datosUsuario.append("Tipo documento: ").append(usuarioAlta.getTipoDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("NÂº documento: ").append(usuarioAlta.getNumDocAcreditativo()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("Email personal: ").append(usuarioAlta.getEmail()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("NÂº mÃ³vil: ").append(usuarioAlta.getNumeroTelefono()).append(ESCAPED_LINE_SEPARATOR);
+        datosUsuario.append("User Agent: ").append(userAgent).append(ESCAPED_LINE_SEPARATOR);
+        
         datosUsuario.append(datosBravo);
 
         return datosUsuario.toString();
