@@ -1,5 +1,6 @@
 package com.mycorp;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -149,44 +150,8 @@ public class ZendeskService {
 
         try
         {
-            // Obtenemos los datos del cliente
-            DatosCliente cliente = restTemplate.getForObject("http://localhost:8080/test-endpoint", DatosCliente.class, idCliente);
-
-            datosBravo.append("TelÃ©fono: ").append(cliente.getGenTGrupoTmk()).append(ESCAPED_LINE_SEPARATOR);
-
-
-            datosBravo.append("Feha de nacimiento: ").append(formatter.format(formatter.parse(cliente.getFechaNacimiento()))).append(ESCAPED_LINE_SEPARATOR);
-
-            List< ValueCode > tiposDocumentos = getTiposDocumentosRegistro();
-            for(int i = 0; i < tiposDocumentos.size();i++)
-            {
-                if(tiposDocumentos.get(i).getCode().equals(cliente.getGenCTipoDocumento().toString()))
-                {
-                    datosBravo.append("Tipo de documento: ").append(tiposDocumentos.get(i).getValue()).append(ESCAPED_LINE_SEPARATOR);
-                }
-            }
-            datosBravo.append("NÃºmero documento: ").append(cliente.getNumeroDocAcred()).append(ESCAPED_LINE_SEPARATOR);
-
-            datosBravo.append("Tipo cliente: ");
-            switch (cliente.getGenTTipoCliente()) {
-            case 1:
-                datosBravo.append("POTENCIAL").append(ESCAPED_LINE_SEPARATOR);
-                break;
-            case 2:
-                datosBravo.append("REAL").append(ESCAPED_LINE_SEPARATOR);
-                break;
-            case 3:
-                datosBravo.append("PROSPECTO").append(ESCAPED_LINE_SEPARATOR);
-                break;
-            }
-
-            datosBravo.append("ID estado del cliente: ").append(cliente.getGenTStatus()).append(ESCAPED_LINE_SEPARATOR);
-
-            datosBravo.append("ID motivo de alta cliente: ").append(cliente.getIdMotivoAlta()).append(ESCAPED_LINE_SEPARATOR);
-
-            datosBravo.append("Registrado: ").append((cliente.getfInactivoWeb() == null ? "SÃ­" : "No")).append(ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
-
-
+        	datosBravo = getDatosBravo(idCliente);
+            
         }catch(Exception e)
         {
             LOG.error("Error al obtener los datos en BRAVO del cliente", e);
@@ -276,6 +241,60 @@ public class ZendeskService {
     	
 		return detallePolizaResponse;	
     } 
+    
+    
+    /**
+     * MÃ©todo para obtener datos bravo
+     *
+     * @param idCliente
+     * @return datos bravo del cliente
+     */
+    private StringBuilder getDatosBravo(String idCliente) {
+    	StringBuilder datosBravo = new StringBuilder();
+    	
+    	// Obtenemos los datos del cliente
+        DatosCliente cliente = restTemplate.getForObject("http://localhost:8080/test-endpoint", DatosCliente.class, idCliente);
+
+        // montar datosBravo
+        datosBravo.append("TelÃ©fono: ").append(cliente.getGenTGrupoTmk()).append(ESCAPED_LINE_SEPARATOR);
+		try {
+			datosBravo.append("Feha de nacimiento: ").append(formatter.format(formatter.parse(cliente.getFechaNacimiento()))).append(ESCAPED_LINE_SEPARATOR);
+		} catch (ParseException e) {
+			LOG.error("Id cliente :" +idCliente + ".Error al formatear fecha de nacimiento del cliente", e);
+		}
+
+        List< ValueCode > tiposDocumentos = getTiposDocumentosRegistro();
+        for(int i = 0; i < tiposDocumentos.size();i++)
+        {
+            if(tiposDocumentos.get(i).getCode().equals(cliente.getGenCTipoDocumento().toString()))
+            {
+                datosBravo.append("Tipo de documento: ").append(tiposDocumentos.get(i).getValue()).append(ESCAPED_LINE_SEPARATOR);
+            }
+        }
+        datosBravo.append("NÃºmero documento: ").append(cliente.getNumeroDocAcred()).append(ESCAPED_LINE_SEPARATOR);
+
+        datosBravo.append("Tipo cliente: ");
+        switch (cliente.getGenTTipoCliente()) {
+        case 1:
+            datosBravo.append("POTENCIAL").append(ESCAPED_LINE_SEPARATOR);
+            break;
+        case 2:
+            datosBravo.append("REAL").append(ESCAPED_LINE_SEPARATOR);
+            break;
+        case 3:
+            datosBravo.append("PROSPECTO").append(ESCAPED_LINE_SEPARATOR);
+            break;
+        }
+
+        datosBravo.append("ID estado del cliente: ").append(cliente.getGenTStatus()).append(ESCAPED_LINE_SEPARATOR);
+
+        datosBravo.append("ID motivo de alta cliente: ").append(cliente.getIdMotivoAlta()).append(ESCAPED_LINE_SEPARATOR);
+
+        datosBravo.append("Registrado: ").append((cliente.getfInactivoWeb() == null ? "SÃ­" : "No")).append(ESCAPED_LINE_SEPARATOR + ESCAPED_LINE_SEPARATOR);
+
+		return datosBravo;
+    	
+    }
     
     
 }
