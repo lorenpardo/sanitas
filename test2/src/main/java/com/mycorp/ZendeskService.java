@@ -246,7 +246,7 @@ public class ZendeskService {
         datosBravo.append("TelÃ©fono: ").append(cliente.getGenTGrupoTmk()).append(ESCAPED_LINE_SEPARATOR);
 		try {
 			datosBravo.append("Feha de nacimiento: ").append(formatter.format(formatter.parse(cliente.getFechaNacimiento()))).append(ESCAPED_LINE_SEPARATOR);
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			LOG.error("Id cliente :" +idCliente + ".Error al formatear fecha de nacimiento del cliente", e);
 		}
 
